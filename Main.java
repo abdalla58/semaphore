@@ -1,192 +1,219 @@
 package com.company;
-
-import java.util.Objects;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Main {
 
-//    public class CountingSemaphore
-//    {
-//        private int signals = 0;
-//
-//        public synchronized void take()
-//        {
-//            this.signals++;
-//            this.notify();
-//        }
-//
-//        public synchronized void release() throws InterruptedException
-//        {
-//            while(this.signals == 0)
-//                wait();
-//            this.signals--;
-//        }
-//    }
     static class Shared
     {
         static int count = 0;
     }
-//    public static class Device  {
-//        Network network;
-//        public String login(String connection){
-//            connection=network.getThreadName()+" login";
-//            return connection;
-//        }
-//        public String logout(String connection){
-//            connection=network.getThreadName()+" logout";
-//            return connection;
-//        }
-//        public String perform(String connection){
-//            connection=network.getThreadName()+" performs online activity";
-//            return connection;
-//        }
+//
+public static class Device {
+
+    //Network network=new Network();
+    Router router=new Router();
+    public String login(String connection,int n) throws IOException {
+        FileWriter writer=new FileWriter("output.txt",true);
+        connection="connection "+n+" :"+connection+" login";
+        writer.write(connection+"\n");
+        writer.close();
+        return connection;
+    }
+    public String logout(String connection,int n) throws IOException{
+        FileWriter writer=new FileWriter("output.txt",true);
+        connection="connection "+n+" :"+connection+" logout";
+        writer.write(connection+"\n");
+        writer.close();
+        return connection;
+    }
+    public String perform(String connection,int n) throws IOException{
+        FileWriter writer=new FileWriter("output.txt",true);
+        connection="connection "+n+" :"+connection+" performs online activity";
+        writer.write(connection+"\n");
+        writer.close();
+        return connection;
+    }
+}
+    public static class Network {
+    private int maxNumberOfConnection;
+    private int totalNumberOfConnection;
+    private String threadName;
+    private String deviceName;
+
+    public Network(String threadName,String deviceName) {
+        this.threadName=threadName;
+        this.deviceName=deviceName;
+    }
+    public Network(){}
+    public String getThreadName() {
+        return threadName;
+    }
+
+//    public void setDeviceName(String deviceName) {
+//        this.deviceName = deviceName;
 //    }
-//    public static class Network {
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setMaxNumberOfConnection(int maxNumberOfConnection) {
+        this.maxNumberOfConnection = maxNumberOfConnection;
+    }
+
+    public int getMaxNumberOfConnection() {
+        return maxNumberOfConnection;
+    }
+
+    public void setTotalNumberOfConnection(int totalNumberOfConnection) {
+        this.totalNumberOfConnection = totalNumberOfConnection;
+    }
+
+    public int getTotalNumberOfConnection() {
+        return totalNumberOfConnection;
+    }
+}
+   public static class Router {
+    Network network=new Network();
+    //Device device;
+//    private int a;
 //
-//        private int maxNumberOfConnection;
-//        private int totalNumberOfConnection;
-//        private String threadName;
-//        private String deviceName;
-//
-//        public Network() {}
-//        public void setThreadName(String threadName) {
-//            this.threadName = threadName;
-//        }
-//        public String getThreadName() {
-//            return threadName;
-//        }
-//
-//        public void setDeviceName(String deviceName) {
-//            this.deviceName = deviceName;
-//        }
-//
-//        public String getDeviceName() {
-//            return deviceName;
-//        }
-//
-//        public void setMaxNumberOfConnection(int maxNumberOfConnection) {
-//            this.maxNumberOfConnection = maxNumberOfConnection;
-//        }
-//
-//        public int getMaxNumberOfConnection() {
-//            return maxNumberOfConnection;
-//        }
-//
-//        public void setTotalNumberOfConnection(int totalNumberOfConnection) {
-//            this.totalNumberOfConnection = totalNumberOfConnection;
-//        }
-//
-//        public int getTotalNumberOfConnection() {
-//            return totalNumberOfConnection;
-//        }
+//    public void setA(int a) {
+//        this.a = a;
 //    }
-//    public  class Router {
-//        Semaphore sem;
-//        Network network;
-//        Device device;
-//        public void release(Semaphore semaphore){
-//            semaphore.release();
-//        }
-//        public void occupy(int n){
-//            System.out.println("connection "+n+":"+network.getThreadName()+ "Occupied");
-//        }
+//
+//    public int getA() {
+//        return a;
 //    }
-//    public static class semaphore extends Thread{
-//        Device device;
-//        Semaphore sem;
-//        Network network;
-//        Router router;
-//        public semaphore(Semaphore sem, String threadName)
-//        {
-//            super(threadName);
-//            this.sem = sem;
-//            //threadName= network.threadName;
-//        }
-//        @Override
-//        public void run() {
-//
-//            // run by thread A
-//            if(Objects.equals(network.getThreadName(), "C1"))
-//            {
-//                System.out.println("("+network.getThreadName()+") "+"("+network.getDeviceName()+") arrived");
-//                //System.out.println("("+network2.threadName+") "+"("+network2.deviceName+") arrived");
-//                try
-//                {
-//                    Shared.count++;
-//                    router.occupy(Shared.count);
-//                    // acquiring the lock
-//                    sem.acquire();
-//                    Shared.count++;
-//                    Thread.sleep(10);
-//                    System.out.println(device.login(network.getThreadName()));
-//                    Shared.count++;
-//                    Thread.sleep(10);
-//                    System.out.println(device.perform(network.getThreadName()));
-//
-//                } catch (InterruptedException exc) {
-//                    System.out.println(exc);
-//                }
-//
-//                // Release the permit.
-//                System.out.println(device.logout(network.getThreadName()));
-//                router.release(sem);
-//            }
-//
-//            // run by thread B
-//            else
-//            {
-//                System.out.println("("+network.getThreadName()+") "+"("+network.getDeviceName()+") arrived");
-//                //System.out.println("("+network2.threadName+") "+"("+network2.deviceName+") arrived");
-//                try
-//                {
-//                    Shared.count--;
-//                    router.occupy(2);
-//                    // acquiring the lock
-//                    sem.acquire();
-//                    Shared.count--;
-//                    Thread.sleep(10);
-//                    System.out.println(device.login(network.getThreadName()));
-//                    Shared.count--;
-//                    Thread.sleep(10);
-//                    System.out.println(device.perform(network.getThreadName()));
-//
-//                } catch (InterruptedException exc) {
-//                    System.out.println(exc);
-//                }
-//
-//                // Release the permit.
-//                System.out.println(device.logout(network.getThreadName()));
-//                router.release(sem);
-//            }
-//        }
-//    }
+    public void release(Semaphore semaphore){
+        semaphore.release();
+    }
+    public void occupy(String threadName,int a) throws IOException {
+        FileWriter writer=new FileWriter("output.txt",true);
+        System.out.println("connection "+a+" :"+threadName+ " Occupied");
+        writer.write("connection "+a+" :"+threadName+ " Occupied"+"\n");
+        writer.close();
+    }
+}
+    public static class semaphore extends Thread{
+    Device device=new Device();
+    Semaphore sem;
+    Network network=new Network();
+    Router router=new Router();
+    String threadName;
+    String deviceName;
+    public int c=0;
+
+    public semaphore(Semaphore sem, String threadName,String deviceName)
+    {
+        super(threadName);
+        this.sem = sem;
+        this.threadName=threadName;
+        this.deviceName=deviceName;
+    }
+
+
+    @Override
+    public void run() {
+
+            try
+            {
+                //c=(c+1)%2;
+                switch(threadName) {
+                    case "C1":
+                        c=1;
+                        break;
+                    case "C2":
+                        c=2;
+                        break;
+                    case "C3":
+                        c=1;
+                        break;
+                    case "C4":
+                        c=2;
+                        break;
+                    case "C5":
+                        c=1;
+                        break;
+                    case "C6":
+                        c=1;
+                        break;
+                }
+
+                // acquiring the lock
+                sem.acquire();
+                router.occupy(threadName,c);
+                Main.Shared.count++;
+                System.out.println(device.login(threadName,c));
+                Main.Shared.count++;
+                System.out.println(device.perform(threadName,c));
+
+            } catch (InterruptedException | IOException exc) {
+                System.out.println(exc);
+            }
+
+            // Release the permit.
+            Main.Shared.count++;
+        try {
+            System.out.println(device.logout(threadName,c));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        router.release(sem);
+    }
+}
 
 
 
-    public static void main(String[] args) throws InterruptedException {
-        Semaphore sem=new Semaphore(2);
-        Network network2=new Network("C2","laptop");
+    public static void main(String[] args) throws IOException, InterruptedException {
+        //FileWriter writer=new FileWriter("output.txt",true);
+        Network network=new Network();
+        //Router router=new Router();
         Scanner input=new Scanner(System.in);
         System.out.println("What is the number of WI-FI Connections?");
         int a=input.nextInt();
+        Semaphore sem=new Semaphore(a);
         System.out.println("What is the number of devices Clients want to connect?");
         int b=input.nextInt();
-        String S=input.next();
-        String A=input.next();
-        Network network=new Network(S,A);
         network.setMaxNumberOfConnection(a);
         network.setTotalNumberOfConnection(b);
-        semaphore t1=new semaphore(sem,network.getThreadName());
-        semaphore t2=new semaphore(sem,"C2");
-        t1.start();
-        t2.start();
-        t1.join();
-        t2.join();
-//        for (int i=0;i< network.totalNumberOfConnection;i++){
-//            String a=input.nextLine();
-//            String b=input.nextLine();
-//            Network network=new Network(a,b);
-//        }
+        Network[] network1= new Network[b];
+        semaphore[] t=new semaphore[b];
+        for (int i=0;i<network.getTotalNumberOfConnection();i++){
+            String S=input.next();
+            String A=input.next();
+            network1[i]=new Network(S,A);
+            t[i]=new semaphore(sem,network1[i].getThreadName(),network1[i].getDeviceName());
+        }
+        int c=1;
+        for (int i=0;i< network.getMaxNumberOfConnection();i++){
+            System.out.println("("+t[i].threadName+") "+"("+t[i].deviceName+") arrived");
+            //c=(c+1)%2;
+            //router.setA(c+1);
+            t[i].start();
+        }for (int i=2;i<b;i++){
+            System.out.println("("+t[i].threadName+") "+"("+t[i].deviceName+") arrived and waiting");
+            //c=(c+1)%2;
+            //router.setA(c+1);
+            t[i].start();
+        }
+        for (int i=0;i<b;i++){
+            t[i].join();
+        }
     }
 }
+/*
+4
+C1
+mobile
+C2
+laptop
+C3
+PC
+C4
+ipad
+ */
